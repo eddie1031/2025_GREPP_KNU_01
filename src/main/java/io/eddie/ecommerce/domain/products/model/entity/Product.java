@@ -1,5 +1,6 @@
 package io.eddie.ecommerce.domain.products.model.entity;
 
+import io.eddie.ecommerce.common.model.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,20 +16,11 @@ import java.util.UUID;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String code;
+public class Product extends BaseEntity {
 
     private String name;
     private String description;
     private Long price;
-
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Builder
     public Product(String name, String description, Long price) {
@@ -36,20 +28,18 @@ public class Product {
         this.description = description;
         this.price = price;
 
-        this.code = generateCode();
+//        this.code = generateCode();
 
     }
 
-    private String generateCode() {
-        return UUID.randomUUID().toString();
-    }
 
     public void update(String name, String description, Long price) {
         this.name = name;
         this.description = description;
         this.price = price;
 
-        this.updatedAt = LocalDateTime.now();
+//        this.updatedAt = LocalDateTime.now();
+        updateClock();
     }
 
 }
