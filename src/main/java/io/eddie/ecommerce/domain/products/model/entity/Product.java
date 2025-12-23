@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Entity
@@ -20,20 +21,35 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String code;
+
     private String name;
     private String description;
     private Long price;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Builder
     public Product(String name, String description, Long price) {
         this.name = name;
         this.description = description;
         this.price = price;
+
+        this.code = generateCode();
+
     }
 
+    private String generateCode() {
+        return UUID.randomUUID().toString();
+    }
 
+    public void update(String name, String description, Long price) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+
+        this.updatedAt = LocalDateTime.now();
+    }
 
 }
