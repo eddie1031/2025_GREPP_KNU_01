@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,12 +19,17 @@ import java.util.Optional;
 public class MemberService implements UserDetailsService {
 
     private final MemberJpaRepository memberJpaRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Member save(MemberSaveRequest request) {
+
+        String password = request.password();
+        String encode = passwordEncoder.encode(password);
+
         Member member = Member.builder()
                 .username(request.username())
-                .password(request.password())
+                .password(encode)
                 .email(request.email())
                 .build();
         return memberJpaRepository.save(member);
