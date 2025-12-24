@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConf {
@@ -18,7 +19,8 @@ public class SecurityConf {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            AuthenticationSuccessHandler authenticationSuccessHandler
+            AuthenticationSuccessHandler authenticationSuccessHandler,
+            TokenAuthenticationFilter authenticationFilter
     ) throws Exception {
         return http
                 .csrf( csrf -> {
@@ -38,11 +40,13 @@ public class SecurityConf {
                                     .permitAll()
 
                                 .requestMatchers("/members/**")
-                                    .hasAnyAuthority("MEMBER", "ADMIN")
+                                    .hasAnyAuthority( "ADMIN")
 
                                 .anyRequest()
                                     .permitAll()
                 )
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .build();
 
     }
