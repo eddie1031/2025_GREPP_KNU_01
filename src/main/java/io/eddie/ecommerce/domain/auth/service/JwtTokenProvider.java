@@ -2,33 +2,41 @@ package io.eddie.ecommerce.domain.auth.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class JwtTokenProvider {
 
-    public String issue() {
+    @Value("${jwt.expiration}")
+    private long expTime;
 
-        long expTime = 60_000L;
+    @Value("${jwt.secret.app-key}")
+    private String secretKey;
 
-        String secretKey = "A5A10BC17B4E653C78BDD55FFFD9DEE3BE5790CD6F3F64DC1E82E791F9821C17";
+    public String issue(Map<String, Object> body) {
 
-        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        SecretKey key = getKey();
 
-        String jwtToken = Jwts.builder()
+        return Jwts.builder()
                 .issuedAt(new Date())
                 .expiration(
                         new Date(
                                 new Date().getTime() + expTime
                         )
-                ).signWith(key)
+                )
+                .claims(body)
+                .signWith(key)
                 .compact();
+    }
 
-
-        return jwtToken;
+    private @NonNull SecretKey getKey() {
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
 }

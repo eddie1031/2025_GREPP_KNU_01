@@ -9,13 +9,17 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 public class SecurityConf {
 
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            AuthenticationSuccessHandler authenticationSuccessHandler
+    ) throws Exception {
         return http
                 .csrf( csrf -> {
                     csrf.disable();
@@ -25,7 +29,7 @@ public class SecurityConf {
                         headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
 
-                .formLogin(Customizer.withDefaults())
+                .formLogin( form -> form.successHandler(authenticationSuccessHandler))
                 .authorizeHttpRequests(
                         auth -> auth.requestMatchers(HttpMethod.POST, "/members")
                                 .permitAll()
